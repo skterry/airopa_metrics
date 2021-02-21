@@ -1,1 +1,1 @@
-Modified version of P. Turri's airopa_benchmarks [here](https://github.com/skterry/DAOPHOT-MCMC/blob/master/User_Manual.pdf).
+Modified version of P. Turri's airopa_benchmarks [here](https://bitbucket.org/pturri83/airopa_benchmarks/src/master/).

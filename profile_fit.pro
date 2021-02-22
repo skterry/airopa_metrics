@@ -240,7 +240,7 @@ PRO profile_fit, img, dir_test, year, filter_name, atm_inst, parang, rotposn, $
       f_force=f_force, $
       makeRes=1, $
       makeStars=1, $
-      debug=0, $
+      debug=1, $
       save_otf=0
     CD, old_dir
     

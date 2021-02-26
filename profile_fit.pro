@@ -37,7 +37,7 @@
 ;     fixpsf : in, optional, type=INT, default=0
 ;       Clean the PSF (0 or 1)
 ;     back_clip : in, optional, type=INT, default=1
-;       Use contiguous background (0 or 1)
+;       noise-dominated areas of the PSF are clipped to zero
 ;     weighted : in, optional, type=INT, default=1
 ;       Weight PSF stars (0 or 1)
 ;     backboxFWHM : in, optional, type=FLOAT, default=25.

@@ -98,7 +98,7 @@ def plot_residual_image(old_res, new_res, mode):
     return
 
 
-def compare_fvu_on_star(old_fit_dir, new_fit_dir, old_img_dir, new_img_dir, old_img_root, new_img_root, mode, star_pos=[494, 549], star_name):
+def compare_fvu_on_star(old_fit_dir, new_fit_dir, old_img_dir, new_img_dir, old_img_root, new_img_root, mode, star_name, star_pos=[494, 549]):
     new_res = new_fit_dir + mode + '/' + new_img_root + '_res.fits'
     old_res = old_fit_dir + mode + '/' + old_img_root + '_res.fits'
     img_file = new_img_dir + new_img_root + '.fits'

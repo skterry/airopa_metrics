@@ -80,7 +80,9 @@ PRO profile_fit, img, dir_test, year, filter_name, atm_inst, parang, rotposn, $
   weighted=weighted, backboxFWHM=backboxFWHM, n_grid_over=n_grid_over, $
   part_size=part_size, flat=flat, subtract=subtract, dimm_file=dimm_file, $
   mass_file=mass_file, atm_corr_file=atm_corr_file, conf_file=conf_file, $
-  on_sky=on_sky, force=force, x_force=x_force, y_force=y_force, f_force=f_force
+  on_sky=on_sky, force=force, x_force=x_force, y_force=y_force, f_force=f_force, $
+  fix_Psf_Cos = fix_Psf_Cos, fix_Psf_Smooth = fix_Psf_Smooth, fix_Psf_HaloClip = fix_Psf_HaloClip, $
+  fix_Psf_Trim = fix_Psf_Trim, fix_Psf_maskrad = fix_Psf_maskrad, fix_Psf_nSigmaStart = fix_Psf_nSigmaStart
   
   ; Set the keywords' default values
   IF N_ELEMENTS(psf_const) EQ 0 THEN (psf_const = 0)
@@ -102,6 +104,12 @@ PRO profile_fit, img, dir_test, year, filter_name, atm_inst, parang, rotposn, $
   IF NOT KEYWORD_SET(atm_corr_file) THEN (atm_corr_file = $
     'ratio_atm_corr_k_101_to_301.fits')
   IF NOT KEYWORD_SET(conf_file) THEN (conf_file = 'airopa.config')
+  IF NOT KEYWORD_SET(fix_Psf_Cos) THEN (fix_Psf_Cos = 0)
+  IF NOT KEYWORD_SET(fix_Psf_Smooth) THEN (fix_Psf_Smooth = 0)
+  IF NOT KEYWORD_SET(fix_Psf_HaloClip) THEN (fix_Psf_HaloClip = 0)
+  IF NOT KEYWORD_SET(fix_Psf_Trim) THEN (fix_Psf_Trim = 0)
+  IF NOT KEYWORD_SET(fix_Psf_maskrad) THEN (fix_Psf_maskrad = 0)
+  IF NOT KEYWORD_SET(fix_Psf_nSigmaStart) THEN (fix_Psf_nSigmaStart = 0)
   
   ; Generate a header file
   CALDAT, SYSTIME(/JULIAN), month_cal, day_cal, year_cal
@@ -240,8 +248,14 @@ PRO profile_fit, img, dir_test, year, filter_name, atm_inst, parang, rotposn, $
       f_force=f_force, $
       makeRes=1, $
       makeStars=1, $
-      debug=1, $
-      save_otf=0
+      debug=0, $
+      save_otf=0, $
+      fix_Psf_Cos = fix_Psf_Cos, $
+      fix_Psf_Smooth = fix_Psf_Smooth, $
+      fix_Psf_HaloClip = fix_Psf_HaloClip, $
+      fix_Psf_Trim = fix_Psf_Trim, $
+      fix_Psf_maskrad = fix_Psf_maskrad, $
+      fix_Psf_nSigmaStart = fix_Psf_nSigmaStart
     CD, old_dir
     
     ; Move the output files to their relative output folder

@@ -70,7 +70,7 @@ def analyze_microlens(dir_label, dir_test, img_test, n_detect_min, bright_mag,
     label['x0'] += dx_label
     label['y0'] += dy_label
     cat = starlists.StarList.from_lis_file(path.join(dir_test, 'fit', 'legacy',
-                                           (img_test + '_0.6_stf_cal.lis')),
+                                           (img_test + '_0.8_stf_cal.lis')),
                                            error=False)
     label['dt'] = cat['t'][0] - label['t']
     label['x'] = label['x0'] + (label['vx'] * label['dt'])
@@ -747,7 +747,7 @@ def analyze_microlens(dir_label, dir_test, img_test, n_detect_min, bright_mag,
         fig.colorbar(scatter, cax=colorbar_ax, orientation='horizontal')
         colorbar_ax.xaxis.set_ticks_position('top')
         colorbar_ax.tick_params(labelsize=15)
-        colorbar_ax.set_xlabel(r"$\Delta$r (px)", fontsize=18)
+        colorbar_ax.set_xlabel(r"FVU", fontsize=18)
         save_path = path.join(folder_out, 'xyfvu')
         plt.savefig(save_path + '.png')
         plt.savefig(save_path + '.pdf')

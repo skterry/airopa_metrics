@@ -303,7 +303,7 @@ def compare_fvu_on_three_star(one_fit_dir, two_fit_dir, three_fit_dir, one_img_d
                cmap=cmap, vmin=vmin_i, vmax=vmax_i)
     plt.colorbar(orientation='horizontal')
     #plt.title('Img ' + mode)
-    plt.title('Img ' + star_name)
+    plt.title(star_name)
 
     plt.subplot(142, sharex=ax, sharey=ax, aspect='equal')
     plt.imshow(res_cut_one.data, 

@@ -41,6 +41,48 @@ def plot_two_psfs(old_fit_dir, new_fit_dir, old_img_root, new_img_root,mode):
     plt.show()
     return
 
+def plot_three_psfs(one_fit_dir, two_fit_dir, three_fit_dir, one_img_root, two_img_root, three_img_root, mode):
+    if mode is 'variable':
+        three_psf = three_fit_dir + mode + '/' + three_img_root + '_on_axis_psf.fits'
+        two_psf = two_fit_dir + mode + '/' + two_img_root + '_on_axis_psf.fits'
+        one_psf = one_fit_dir + mode + '/' + one_img_root + '_on_axis_psf.fits'
+    else:
+        three_psf = three_fit_dir + mode + '/' + three_img_root + '_psf.fits'
+        two_psf = two_fit_dir + mode + '/' + two_img_root + '_psf.fits'
+        one_psf = one_fit_dir + mode + '/' + one_img_root + '_psf.fits'
+
+    threepsf = fits.getdata(three_psf)
+    twopsf = fits.getdata(two_psf)
+    onepsf = fits.getdata(one_psf)
+
+    min_flux = threepsf[threepsf > 0].min()
+    max_flux = threepsf.max() * 0.8
+    if min_flux < (1e-5 * max_flux):
+        min_flux = 1e-5 * max_flux
+
+    cnorm = LogNorm(vmin=min_flux, vmax=max_flux)
+    cmap = 'hot'
+
+    plt.style.use('dark_background')
+    plt.figure(figsize=(10, 5))
+    plt.subplot(131)
+    plt.imshow(threepsf, norm=cnorm, cmap=cmap)
+    plt.title('Old ' + mode)
+    plt.gca().invert_yaxis()
+
+    plt.subplot(132)
+    plt.imshow(twopsf, norm=cnorm, cmap=cmap)
+    plt.title('Old ' + mode)
+    plt.gca().invert_yaxis()
+
+    plt.subplot(133)
+    plt.imshow(onepsf, norm=cnorm, cmap=cmap)
+    plt.title('New ' + mode)
+    plt.gca().invert_yaxis()
+
+    plt.show()
+    return
+
 def plot_residual_image(old_res, new_res, mode):
     nres = fits.getdata(new_res)
     ores = fits.getdata(old_res)

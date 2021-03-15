@@ -229,6 +229,115 @@ def compare_fvu_on_star(old_fit_dir, new_fit_dir, old_img_dir, new_img_dir, old_
     plt.show()
     return
 
+def compare_fvu_on_three_star(one_fit_dir, two_fit_dir, three_fit_dir, one_img_dir, two_img_dir, three_img_dir, one_img_root, two_img_root, three_img_root, mode, star_name, star_pos=[494, 549]):
+    three_res = three_fit_dir + mode + '/' + three_img_root + '_res.fits'
+    two_res = two_fit_dir + mode + '/' + two_img_root + '_res.fits'
+    one_res = one_fit_dir + mode + '/' + one_img_root + '_res.fits'
+    img_file = three_img_dir + three_img_root + '.fits'
+
+    threeres = fits.getdata(three_res)
+    twores = fits.getdata(two_res)
+    oneres = fits.getdata(one_res)
+    imag = fits.getdata(img_file)
+
+    c_pos = star_pos
+    c_siz = [50, 50]
+
+    # Get the image cutouts
+    res_cut_three = Cutout2D(threeres, c_pos, c_siz)
+    res_cut_two = Cutout2D(twores, c_pos, c_siz)
+    res_cut_one = Cutout2D(oneres, c_pos, c_siz)
+    img_cut = Cutout2D(imag, c_pos, c_siz)
+
+    # Calculate the FVU for old and new.
+    fvu_three = res_cut_three.data.var() / img_cut.data.var()
+    fvu_two = res_cut_two.data.var() / img_cut.data.var()
+    fvu_one = res_cut_one.data.var() / img_cut.data.var()
+
+    # Fetch the FVU for this star from the starlists.
+    sl_one_name = one_fit_dir + mode + '/' + one_img_root + '_0.8_stf_cal.lis'
+    sl_two_name = two_fit_dir + mode + '/' + two_img_root + '_0.8_stf_cal.lis'
+    sl_three_name = three_fit_dir + mode + '/' + three_img_root + '_0.8_stf_cal.lis'
+    sl_one_mname = one_fit_dir + mode + '/' + one_img_root + '_0.8_metrics.txt'
+    sl_two_mname = two_fit_dir + mode + '/' + two_img_root + '_0.8_metrics.txt'
+    sl_three_mname = three_fit_dir + mode + '/' + three_img_root + '_0.8_metrics.txt'
+    sl_one = starlists.StarList.from_lis_file(sl_one_name, fvu_file=sl_one_mname, error=False)
+    sl_two = starlists.StarList.from_lis_file(sl_two_name, fvu_file=sl_two_mname, error=False)
+    sl_three = starlists.StarList.from_lis_file(sl_three_name, fvu_file=sl_three_mname, error=False)
+
+    idx_one = np.where((sl_one['x'] > c_pos[0]-5) & (sl_one['x'] < c_pos[0]+5) & 
+                       (sl_one['y'] > c_pos[1]-5) & (sl_one['y'] < c_pos[1]+5))[0]
+    idx_two = np.where((sl_two['x'] > c_pos[0]-5) & (sl_two['x'] < c_pos[0]+5) & 
+                       (sl_two['y'] > c_pos[1]-5) & (sl_two['y'] < c_pos[1]+5))[0]
+    idx_three = np.where((sl_three['x'] > c_pos[0]-5) & (sl_three['x'] < c_pos[0]+5) & 
+                       (sl_three['y'] > c_pos[1]-5) & (sl_three['y'] < c_pos[1]+5))[0]
+    #pdb.set_trace()
+    print(sl_one[idx_one[0]])
+    print(sl_two[idx_two[0]])
+    print(sl_three[idx_three[0]])
+    print()
+
+    air_fvu_one = sl_one[idx_one[0]]['fvu']
+    air_fvu_two = sl_two[idx_two[0]]['fvu']
+    air_fvu_three = sl_three[idx_three[0]]['fvu']
+
+    print('    My FVU one = {0:f}, two = {1:f}, three = {2:f}'.format(fvu_one, fvu_two, fvu_three))
+    print('AIROPA FVU one = {0:f}, two = {1:f}, three = {2:f}'.format(sl_one[idx_one[0]]['fvu'], sl_two[idx_two[0]]['fvu'], sl_three[idx_three[0]]['fvu']))
+
+    print('    My FVU ratio: FVU Three / One: {0:f}'.format(fvu_three / fvu_one))
+    print('AIROPA FVU ratio: FVU Three / One: {0:f}'.format(sl_three[idx_three[0]]['fvu'] / sl_one[idx_one[0]]['fvu']))
+    
+    cmap = 'hot'
+    vmin_r = np.min([res_cut_one.data.min(), res_cut_two.data.min(), res_cut_three.data.min()])
+    vmax_r = np.max([res_cut_one.data.max(), res_cut_two.data.max(), res_cut_three.data.max()])
+    vmin_i = img_cut.data.min()
+    vmax_i = img_cut.data.max()
+    #cnorm_i = SymLogNorm(linthresh=30, linscale=0.5, vmin=img_cut.data.min(), vmax=img_cut.data.max())
+    #cnorm_r = SymLogNorm(linthresh=30, linscale=0.5, vmin=vmin_r, vmax=vmax_r)
+    
+    fig = plt.figure(figsize=(10, 5))
+    
+    ax = plt.subplot(141, aspect='equal')
+    plt.imshow(img_cut.data, 
+               extent=np.array(img_cut.bbox_original)[::-1].flatten(), 
+               cmap=cmap, vmin=vmin_i, vmax=vmax_i)
+    plt.colorbar(orientation='horizontal')
+    #plt.title('Img ' + mode)
+    plt.title('Img ' + star_name)
+
+    plt.subplot(142, sharex=ax, sharey=ax, aspect='equal')
+    plt.imshow(res_cut_one.data, 
+               extent=np.array(res_cut_one.bbox_original)[::-1].flatten(), 
+               cmap=cmap, vmin=vmin_r, vmax=vmax_r)
+    plt.colorbar(orientation='horizontal')
+    plt.setp(plt.gca().get_yticklabels(), visible=False)
+    #plt.title('Old ' + mode)
+    plt.title('Poor ')
+
+    plt.subplot(143, sharex=ax, sharey=ax, aspect='equal')
+    plt.imshow(res_cut_two.data, 
+               extent=np.array(res_cut_two.bbox_original)[::-1].flatten(), 
+               cmap=cmap, vmin=vmin_r, vmax=vmax_r)
+    plt.colorbar(orientation='horizontal')
+    plt.setp(plt.gca().get_yticklabels(), visible=False)
+    #plt.title('New ' + mode)
+    plt.title('Median ')
+
+    plt.subplot(144, sharex=ax, sharey=ax, aspect='equal')
+    plt.imshow(res_cut_three.data, 
+               extent=np.array(res_cut_three.bbox_original)[::-1].flatten(), 
+               cmap=cmap, vmin=vmin_r, vmax=vmax_r)
+    plt.colorbar(orientation='horizontal')
+    plt.setp(plt.gca().get_yticklabels(), visible=False)
+    #plt.title('New ' + mode)
+    plt.title('Best ')
+    plt.gca().invert_yaxis()
+
+    plt.savefig(star_name + '.pdf', dpi=300)
+    plt.savefig(star_name + '.png', dpi=300)
+    plt.show()
+    return
+    
 def compare_fvu_vs_mag(old_fit_dir, new_fit_dir, old_img_dir, new_img_dir, old_img_root, new_img_root, mode):
     new_res = new_fit_dir + mode + '/' + new_img_root + '_res.fits'
     old_res = old_fit_dir + mode + '/' + old_img_root + '_res.fits'

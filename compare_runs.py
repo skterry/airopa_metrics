@@ -61,25 +61,43 @@ def plot_three_psfs(one_fit_dir, two_fit_dir, three_fit_dir, one_img_root, two_i
         min_flux = 1e-5 * max_flux
 
     cnorm = LogNorm(vmin=min_flux, vmax=max_flux)
-    cmap = 'hot'
+    cmap = 'magma'
 
     plt.style.use('dark_background')
-    plt.figure(figsize=(10, 5))
+    plt.figure(figsize=(13, 8))
+
     plt.subplot(131)
     plt.imshow(threepsf, norm=cnorm, cmap=cmap)
-    plt.title('Old ' + mode)
+    plt.title('Strehl=0.43, FWHM=51.46 mas', color='k')
+    plt.xlabel('x [pix]', color='k')
+    plt.ylabel('y [pix]', color='k')
     plt.gca().invert_yaxis()
+    plt.xlim(75,220)
+    plt.ylim(75,220)
+    plt.tick_params(colors='black')
 
     plt.subplot(132)
     plt.imshow(twopsf, norm=cnorm, cmap=cmap)
-    plt.title('Old ' + mode)
+    plt.title('Strehl=0.25, FWHM=70.58 mas', color='k')
+    plt.xlabel('x [pix]', color='k')
+    plt.ylabel('y [pix]', color='k')
     plt.gca().invert_yaxis()
+    plt.xlim(75,220)
+    plt.ylim(75,220)
+    plt.tick_params(colors='black')
 
     plt.subplot(133)
     plt.imshow(onepsf, norm=cnorm, cmap=cmap)
-    plt.title('New ' + mode)
+    plt.title('Strehl=0.15, FWHM=94.94 mas', color='k')
+    plt.xlabel('x [pix]', color='k')
+    plt.ylabel('y [pix]', color='k')
     plt.gca().invert_yaxis()
+    plt.xlim(75,220)
+    plt.ylim(75,220)
+    plt.tick_params(colors='black')
 
+    plt.savefig('psf_compare.eps', format='eps', facecolor='w')
+    plt.savefig('psf_compare.pdf', dpi=500, facecolor='w', bbox_inches='tight')
     plt.show()
     return
 

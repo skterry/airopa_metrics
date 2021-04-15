@@ -281,9 +281,7 @@ def analyze_microlens(dir_label, dir_test, img_test, n_detect_min, bright_mag,
         m_bright_std = m_std[bright_idx]
         r_bright_std = r_std[bright_idx]
         fvu_bright = fvu[bright_idx]
-        #-------------------------
         #Generate {mode}_metrics.txt files
-        #-------------------------
         metrics = numpy.column_stack([name,m,m_std,x,y,r,r_std,fvu,n_detect])
         numpy.savetxt('metrics.dat', metrics, fmt='%s', delimiter=' ')
         pdb.set_trace()
